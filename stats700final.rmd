@@ -157,7 +157,7 @@ print(plot_2D_GMM_signal(chandra, chandra$signal[[1]]$z))
 # plot posterior
 post_samp = sample_post(chandra)
 output <- sample_theta(k = 6, post_samp$X, post_samp$z, post_samp$K)
-hist_rho(post_samp$rho)
-hist_pi(output$pi)
-hist_mu(output$mu, data$mu)
+print(hist_rho(post_samp$rho))
+print(hist_pi(output$pi))
+print(hist_mu(output$mu, data$mu))
 ```

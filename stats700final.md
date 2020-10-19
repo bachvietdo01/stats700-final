@@ -190,19 +190,25 @@ print(plot_2D_GMM_signal(chandra, chandra$signal[[1]]$z))
 # plot posterior
 post_samp = sample_post(chandra)
 output <- sample_theta(k = 6, post_samp$X, post_samp$z, post_samp$K)
-hist_rho(post_samp$rho)
+print(hist_rho(post_samp$rho))
 ```
 
 ![](stats700final_files/figure-markdown/unnamed-chunk-10-1.png)
 
+    ## NULL
+
 ``` {.r}
-hist_pi(output$pi)
+print(hist_pi(output$pi))
 ```
 
 ![](stats700final_files/figure-markdown/unnamed-chunk-10-2.png)
 
+    ## NULL
+
 ``` {.r}
-hist_mu(output$mu, data$mu)
+print(hist_mu(output$mu, data$mu))
 ```
 
 ![](stats700final_files/figure-markdown/unnamed-chunk-10-3.png)
+
+    ## NULL
