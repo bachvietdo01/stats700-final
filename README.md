@@ -234,10 +234,9 @@ K = 6
 D = 2
 
 # intialize VI algorithm at random
-chandra <- vb_gmm(data$X, K = 6, epsilon_conv = 1e-4)
+chandra <- vb_gmm(data$X, K = 6, epsilon_conv = 1e-4,
+                  animated = FALSE)
 ```
-
-![](README_files/figure-markdown/unnamed-chunk-12-1.png)![](README_files/figure-markdown/unnamed-chunk-12-2.png)![](README_files/figure-markdown/unnamed-chunk-12-3.png)![](README_files/figure-markdown/unnamed-chunk-12-4.png)![](README_files/figure-markdown/unnamed-chunk-12-5.png)![](README_files/figure-markdown/unnamed-chunk-12-6.png)![](README_files/figure-markdown/unnamed-chunk-12-7.png)![](README_files/figure-markdown/unnamed-chunk-12-8.png)![](README_files/figure-markdown/unnamed-chunk-12-9.png)![](README_files/figure-markdown/unnamed-chunk-12-10.png)![](README_files/figure-markdown/unnamed-chunk-12-11.png)![](README_files/figure-markdown/unnamed-chunk-12-12.png)![](README_files/figure-markdown/unnamed-chunk-12-13.png)![](README_files/figure-markdown/unnamed-chunk-12-14.png)![](README_files/figure-markdown/unnamed-chunk-12-15.png)![](README_files/figure-markdown/unnamed-chunk-12-16.png)![](README_files/figure-markdown/unnamed-chunk-12-17.png)![](README_files/figure-markdown/unnamed-chunk-12-18.png)![](README_files/figure-markdown/unnamed-chunk-12-19.png)![](README_files/figure-markdown/unnamed-chunk-12-20.png)
 
 ``` {.r}
 ggplot(data.frame(it = 1: length(chandra$L), ELBO = chandra$L)) + 

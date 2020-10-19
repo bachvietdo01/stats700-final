@@ -170,7 +170,7 @@ source('utils/helpers.R')
 source('utils/visualisation.R')
 ```
 
-```{r cache=TRUE, results="hide"}
+```{r results="hide"}
 set.seed(0)
 K = 6
 D = 2
@@ -246,7 +246,7 @@ source('utils/helpers.R')
 source('utils/visualisation.R')
 ```
 
-```{r results="hide"}
+```{r cache = TRUE,results="hide"}
 load('data/em_init.RData')
 
 # prepare to run Gibbs
