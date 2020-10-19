@@ -170,7 +170,7 @@ source('utils/helpers.R')
 source('utils/visualisation.R')
 ```
 
-```{r cache=TRUE, results="hide"}
+```{r results="hide"}
 set.seed(0)
 K = 6
 D = 2
