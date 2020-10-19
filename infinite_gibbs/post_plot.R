@@ -128,7 +128,7 @@ hist_mu(output$mu, data$mu)
 hist_Sigma(output$Sigma, data$Sigma)
 
 # get credible intervable
-quantile(output$mu[,2,1], c(0.025, 0.975))
+quantile(output$pi[4], c(0.025, 0.975))
 
 
 

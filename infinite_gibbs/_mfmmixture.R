@@ -374,24 +374,5 @@ MFMMixture <- setRefClass("MFMMixture",
                              L_k <- chol(S_k - kappa_k * outer(m_k, m_k))
                              testthat::expect_equal(L_k, sig_components[[k]]$L)
                            }
-                         },
-                         plot = function(){
-                           # r1 <- extendrange(X[, 1])
-                           # r2 <- extendrange(X[, 2])
-                           # xval <- seq(r1[1], r1[2], 0.02)
-                           # yval <- seq(r2[1], r2[2], 0.02)
-                           # dftemp <- melt(outer(xval , yval))
-                           # x <- xval[df.temp$Var1]
-                           # y <- yval[df.temp$Var2]
-                           # mat <- cbind(x, y)
-                           # df <- data.frame(c())
-                           mu_list <- list()
-                           Sigma_list <- list()
-                           
-                           for(k in 1:K){
-                             Sigma_list[[k]] <- sig_components[[k]]$Sigma
-                             mu_list[[k]] <- sig_components[[k]]$mu
-                           }
-                           plot_mixture(mu_list, Sigma_list, X, z)
                          }
                        ))

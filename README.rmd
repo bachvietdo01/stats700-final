@@ -176,7 +176,8 @@ K = 6
 D = 2
 
 # intialize VI algorithm at random
-chandra <- vb_gmm(data$X, K = 6, epsilon_conv = 1e-4)
+chandra <- vb_gmm(data$X, K = 6, epsilon_conv = 1e-4,
+                  animated = FALSE)
 ```
 
 ```{r}
@@ -245,7 +246,7 @@ source('utils/helpers.R')
 source('utils/visualisation.R')
 ```
 
-```{r cache=TRUE, results="hide"}
+```{r results="hide"}
 load('data/em_init.RData')
 
 # prepare to run Gibbs
@@ -269,7 +270,7 @@ chandra = MFMMixture(K = K, D = 2, X = X, s = s, z = z, m0 = colMeans(X),
                  m0_init = m0_init)
 
 # run MFM Gibbs
-niters = 10
+niters = 50
 K_iters = rep(0, niters)
 for(i in 1:niters) {
   chandra$collapsed_gibbs()

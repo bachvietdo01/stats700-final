@@ -339,7 +339,7 @@ chandra = MFMMixture(K = K, D = 2, X = X, s = s, z = z, m0 = colMeans(X),
                  m0_init = m0_init)
 
 # run MFM Gibbs
-niters = 10
+niters = 50
 K_iters = rep(0, niters)
 for(i in 1:niters) {
   chandra$collapsed_gibbs()

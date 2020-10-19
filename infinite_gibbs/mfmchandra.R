@@ -13,12 +13,12 @@ ggplot() + geom_point(data = data.frame(x = data$X[,1], y = data$X[, 2]),
 
 # prepare to run Gibbs
 X = as.matrix(data$X)
-K = 20
+K = 10
 
 s = rep(1, nrow(X))
 z = kmeans(x = X, K)$cluster
-s = em$s
-z = em$z
+s = em_inits$s
+z = em_inits$z
 
 
 m0_init = matrix(0, ncol = 6, nrow = 2)
@@ -34,7 +34,7 @@ chandra = MFMMixture(K = K, D = 2, X = X, s = s, z = z, m0 = colMeans(X),
                  m0_init = m0_init)
 
 # run MFM Gibbs
-niters = 10
+niters = 30
 K_iters = rep(0, niters)
 for(i in 1:niters) {
   if (i == 1 || i %% 5 == 0 ) {
