@@ -44,7 +44,7 @@ sample_theta <- function(k = 1, X, z, K) {
 hist_rho <- function(rho, rho_true = NULL) {
   # Plot dth dim of pi
   par(mfrow = c(1, 1))
-  hist(rho, 15, xlab = "rho",  main="Signal ratio")
+  hist(rho, xlab = "rho",  main="Signal ratio")
   if (!is.null(rho_true)) {
     abline(v = rho_true, col = "red", lwd = 2)
   }

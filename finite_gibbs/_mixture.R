@@ -102,8 +102,10 @@ Mixture <- setRefClass("Mixture",
                           }
                         },
                         generate_sample = function(n) {
+                          N1 <- sum(s == 1)
+                          
                           samp <- signal[[1]]$generate_sample(n)
-                          samp$rho <- rho
+                          samp$rho <- rbeta(1, alpha0 + N1, alpha0 + N_total - N1)
                           return(samp)
                         }
                        ))
