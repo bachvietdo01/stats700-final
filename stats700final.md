@@ -1,25 +1,46 @@
 ---
-title: "STATS 700 Final Project: Mixture Model on Source Detection Problem"
-author: "Bach Viet Do"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
-geometry: "left=2.5cm,right=2.5cm,top=1.5cm,bottom=1.5cm"
+author: Bach Viet Do
+date: '19 October, 2020'
+geometry: 'left=2.5cm,right=2.5cm,top=1.5cm,bottom=1.5cm'
 output:
   md_document:
-    toc: true
+    preserve_yaml: True
+    toc: True
     variant: markdown
-    preserve_yaml: true
+title: 'STATS 700 Final Project: Mixture Model on Source Detection Problem'
 ---
 
-# Prepare & plot Chandra dataset
+-   [Prepare & plot Chandra dataset](#prepare-plot-chandra-dataset)
+-   [Mixture of Finite Gaussian Mixture Model and Uniform
+    Background](#mixture-of-finite-gaussian-mixture-model-and-uniform-background)
+    -   [Inference Algorithm 1: EM
+        algorithm](#inference-algorithm-1-em-algorithm)
+    -   [Inference Algorithm 2: Gibbs
+        Sampler](#inference-algorithm-2-gibbs-sampler)
 
-```{r}
+Prepare & plot Chandra dataset
+==============================
+
+``` {.r}
 # libraries
 require(ggplot2)
+```
+
+    ## Loading required package: ggplot2
+
+``` {.r}
 require(mvtnorm)
+```
+
+    ## Loading required package: mvtnorm
+
+``` {.r}
 require(CholWishart)
 ```
 
-```{r message=FALSE, results='hide'}
+    ## Loading required package: CholWishart
+
+``` {.r}
 # source the codes
 Rcpp::sourceCpp('utils/helpers.cpp')
 source('utils/visualisation.R')
@@ -30,18 +51,21 @@ rm(list=ls()[! ls() %in% c("spatial")])
 data = list(X = spatial)
 ```
 
-```{r}
+``` {.r}
 # plot data
 data <- list(X = spatial[1:1000,])
 ggplot() + geom_point(data = data.frame(x = data$X[,1], y = data$X[,2]), aes(x, y)) 
 ```
 
-# Mixture of Finite Gaussian Mixture Model and Uniform Background
+![](stats700final_files/figure-markdown/unnamed-chunk-3-1.png)
 
-## Inference Algorithm 1: EM algorithm
+Mixture of Finite Gaussian Mixture Model and Uniform Background
+===============================================================
 
+Inference Algorithm 1: EM algorithm
+-----------------------------------
 
-```{r}
+``` {.r}
 # source the codes
 source('em/_em_component.R')
 source('em/_em_mixture.R')
@@ -50,7 +74,7 @@ source('utils/helpers.R')
 source('utils/visualisation.R')
 ```
 
-```{r results = "hide", cache=TRUE}
+``` {.r}
 # prepare to run EM
 X = as.matrix(data$X)
 Ks = 6
@@ -87,16 +111,23 @@ for(i in 1:niters) {
 }
 ```
 
-```{r}
+``` {.r}
 # plot out the inference result
 print(plot_2D_MM_signal(chandra))
+```
+
+![](stats700final_files/figure-markdown/unnamed-chunk-6-1.png)
+
+``` {.r}
 print(plot_em_loglik(loglik))
 ```
 
+![](stats700final_files/figure-markdown/unnamed-chunk-6-2.png)
 
-## Inference Algorithm 2: Gibbs Sampler
+Inference Algorithm 2: Gibbs Sampler
+------------------------------------
 
-```{r}
+``` {.r}
 source('finite_gibbs/_component.R')
 source('finite_gibbs/_mixture.R')
 source('finite_gibbs/_fmmsignal.R')
@@ -105,7 +136,7 @@ source('utils/visualisation.R')
 Rcpp::sourceCpp('utils/helpers.cpp')
 ```
 
-```{r cache=TRUE, results="hide"}
+``` {.r}
 load('data/em_init.RData')
 
 # prepare to run Gibbs
@@ -148,7 +179,9 @@ for(i in 1:niters) {
 }
 ```
 
-```{r}
+``` {.r}
 # plot out the last iteration result
 print(plot_2D_GMM_signal(chandra, chandra$signal[[1]]$z))
 ```
+
+![](stats700final_files/figure-markdown/unnamed-chunk-9-1.png)

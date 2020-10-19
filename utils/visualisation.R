@@ -1,3 +1,5 @@
+require(data.table)
+
 plot_2D_GMM_signal = function(obj, z = NULL, scale_dens = 1.0){
   X = obj$X
   D = obj$D
