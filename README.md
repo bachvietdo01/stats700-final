@@ -19,6 +19,10 @@ title: 'STATS 700 Final Project: Mixture Model on Source Detection Problem'
         Sampler](#inference-algorithm-2-gibbs-sampler)
     -   [Inference Algorithm 3: VI
         Algorithm](#inference-algorithm-3-vi-algorithm)
+    -   [Inference Algorithm 4: DPM
+        Algorithm](#inference-algorithm-4-dpm-algorithm)
+    -   [Inference Algorithm 5: MFM
+        Algorithm](#inference-algorithm-5-mfm-algorithm)
 
 Prepare & plot Chandra dataset
 ==============================
@@ -233,6 +237,8 @@ D = 2
 chandra <- vb_gmm(data$X, K = 6, epsilon_conv = 1e-4)
 ```
 
+![](README_files/figure-markdown/unnamed-chunk-12-1.png)![](README_files/figure-markdown/unnamed-chunk-12-2.png)![](README_files/figure-markdown/unnamed-chunk-12-3.png)![](README_files/figure-markdown/unnamed-chunk-12-4.png)![](README_files/figure-markdown/unnamed-chunk-12-5.png)![](README_files/figure-markdown/unnamed-chunk-12-6.png)![](README_files/figure-markdown/unnamed-chunk-12-7.png)![](README_files/figure-markdown/unnamed-chunk-12-8.png)![](README_files/figure-markdown/unnamed-chunk-12-9.png)![](README_files/figure-markdown/unnamed-chunk-12-10.png)![](README_files/figure-markdown/unnamed-chunk-12-11.png)![](README_files/figure-markdown/unnamed-chunk-12-12.png)![](README_files/figure-markdown/unnamed-chunk-12-13.png)![](README_files/figure-markdown/unnamed-chunk-12-14.png)![](README_files/figure-markdown/unnamed-chunk-12-15.png)![](README_files/figure-markdown/unnamed-chunk-12-16.png)![](README_files/figure-markdown/unnamed-chunk-12-17.png)![](README_files/figure-markdown/unnamed-chunk-12-18.png)![](README_files/figure-markdown/unnamed-chunk-12-19.png)![](README_files/figure-markdown/unnamed-chunk-12-20.png)
+
 ``` {.r}
 ggplot(data.frame(it = 1: length(chandra$L), ELBO = chandra$L)) + 
   geom_line(aes(it, ELBO)) + geom_point(aes(it, ELBO))
@@ -247,3 +253,103 @@ visualize_result(res, res$X, res$K, res$bg_lower, res$bg_upper)
 ```
 
 ![](README_files/figure-markdown/unnamed-chunk-13-2.png)
+
+Inference Algorithm 4: DPM Algorithm
+------------------------------------
+
+``` {.r}
+Rcpp::sourceCpp('utils/helpers.cpp')
+source('infinite_gibbs/_component.R')
+source('infinite_gibbs/_dpmixture.R')
+source('utils/helpers.R')
+source('utils/visualisation.R')
+```
+
+``` {.r}
+load('data/em_init.RData')
+
+# prepare to run Gibbs
+X = as.matrix(data$X)
+K = 12
+s = rep(1, nrow(X))
+z = kmeans(x = X, K)$cluster
+s = em_init$s
+z = em_init$z
+
+m0_init = matrix(0, ncol = 6, nrow = 2)
+m0_init[, 1] = c(4045, 4158)
+m0_init[, 2] = c(4045, 4185)
+m0_init[, 3] = c(4055, 4140)
+m0_init[, 4] = c(4055, 4150)
+m0_init[, 5] = c(4055, 4175)
+m0_init[, 6] = c(4070, 4180)
+
+
+chandra = DPMixture(K = K, D = 2, X = X, s = s, z = z, m0 = colMeans(X),
+                 m0_init = m0_init)
+
+# run MFM Gibbs
+niters = 20
+K_iters = rep(0, niters)
+for(i in 1:niters) {
+  chandra$collapsed_gibbs()
+  K_iters[i] = chandra$K
+}
+```
+
+``` {.r}
+# plot out the DPM chandra
+print(plot_2D_GMM_IMM(chandra))
+```
+
+![](README_files/figure-markdown/unnamed-chunk-16-1.png)
+
+Inference Algorithm 5: MFM Algorithm
+------------------------------------
+
+``` {.r}
+Rcpp::sourceCpp('utils/helpers.cpp')
+source('infinite_gibbs/_component.R')
+source('infinite_gibbs/_mfmmixture.R')
+source('utils/helpers.R')
+source('utils/visualisation.R')
+```
+
+``` {.r}
+load('data/em_init.RData')
+
+# prepare to run Gibbs
+X = as.matrix(data$X)
+K = 20
+
+s = em_init$s
+z = em_init$z
+
+
+m0_init = matrix(0, ncol = 6, nrow = 2)
+m0_init[, 1] = c(4045, 4158)
+m0_init[, 2] = c(4045, 4185)
+m0_init[, 3] = c(4055, 4140)
+m0_init[, 4] = c(4055, 4150)
+m0_init[, 5] = c(4055, 4175)
+m0_init[, 6] = c(4070, 4180)
+
+
+chandra = MFMMixture(K = K, D = 2, X = X, s = s, z = z, m0 = colMeans(X),
+                 m0_init = m0_init)
+
+# run MFM Gibbs
+niters = 10
+K_iters = rep(0, niters)
+for(i in 1:niters) {
+  chandra$collapsed_gibbs()
+  K_iters[i] = chandra$K
+}
+```
+
+``` {.r}
+# plot out the MFM chandra
+print(plot_2D_GMM_IMM(chandra))
+```
+
+![](README_files/figure-markdown/unnamed-chunk-19-1.png)
