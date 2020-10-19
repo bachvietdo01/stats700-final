@@ -44,7 +44,8 @@ vb_gmm <- function(X, bg_lower =  apply(X,2, min), bg_upper =  apply(X,2, max),
                    W0 = diag(1, NCOL(X)), 
                    m_init = NULL,
                    niters = 50,
-                   epsilon_conv = 1e-6) {
+                   epsilon_conv = 1e-6,
+                   animated = FALSE) {
   # Compute logB function
   logB <- function(W, nu){
     D <- NCOL(W)
@@ -93,7 +94,7 @@ vb_gmm <- function(X, bg_lower =  apply(X,2, min), bg_upper =  apply(X,2, max),
 
   # Iterate to find optimal parameters
   for (i in 1:niters) {
-    if(i > 1) {
+    if(i %% 5 == 0 && animated) {
       print(plot_result(X, apply(r_nk, 1, function(p) sample(1:length(p), 1, prob = p))))
     }
     
