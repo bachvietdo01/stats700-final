@@ -1,0 +1,100 @@
+---
+title: "STATS 700 Final Project: Mixture Model on Source Detection Problem"
+author: "Bach Viet Do"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+geometry: "left=2.5cm,right=2.5cm,top=1.5cm,bottom=1.5cm"
+output:
+  html_document:
+    highlight: tango
+    number_sections: yes
+    theme: lumen
+    toc: yes
+    toc_depth: 5
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+---
+
+# Prepare & plot Chandra dataset
+
+```{r}
+# libraries
+require(ggplot2)
+require(mvtnorm)
+require(CholWishart)
+```
+
+```{r message=FALSE, results='hide'}
+# source the codes
+Rcpp::sourceCpp('utils/helpers.cpp')
+source('utils/visualisation.R')
+source('utils/helpers.R')
+
+load('data/chandrasubset.RData')
+rm(list=ls()[! ls() %in% c("spatial")])
+data = list(X = spatial)
+```
+
+```{r}
+# plot data
+data <- list(X = spatial[1:1000,])
+ggplot() + geom_point(data = data.frame(x = data$X[,1], y = data$X[,2]), aes(x, y)) 
+```
+
+# Mixture of Finite Gaussian Mixture Model and Uniform Background
+
+## Inference Algorithm 1: EM algorithm
+
+
+```{r}
+# source the codes
+source('em/_em_component.R')
+source('em/_em_mixture.R')
+source('em/_em_mmsignal.R')
+source('utils/visualisation.R')
+```
+
+```{r results = "hide", cache=TRUE}
+# prepare to run EM
+X = as.matrix(data$X)
+Ks = 6
+
+# intialize the em paramters
+s = rep(1, nrow(X))
+z = kmeans(x = X, Ks + 1)$cluster
+m_init = matrix(rep(apply(X, 2, min), Ks), nrow = dim(X)[2] )
+m_init[, 1] = c(4042, 4155)
+m_init[, 2] = c(4045, 4180)
+m_init[, 3] = c(4055, 4140)
+m_init[, 4] = c(4055, 4150)
+m_init[, 5] = c(4055, 4175)
+m_init[, 6] = c(4070, 4180)
+
+
+gem_init_pars = get_EMNormComponent_example_init_pars(2)
+gem_init_pars$m_init = m_init
+
+chandra = EMMixSigAndBg(Ks = Ks, D = 2, X = X, s = s, z = z,
+               sig_componentClass = EMNormComponent, sig_init_pars = gem_init_pars)
+  
+# run EM
+niters = 20
+
+loglik <- rep(0, niters)
+for(i in 1:niters) {
+  if (i == 1 || i %% 5 == 0 ) {
+    print(paste(c('iter:', i)))
+  }
+    
+  chandra$em_update()
+  loglik[i] <- chandra$get_loglik()
+}
+```
+
+```{r}
+# plot out the inference result
+print(plot_2D_MM_signal(chandra))
+print(plot_em_loglik(loglik))
+```
+
+
