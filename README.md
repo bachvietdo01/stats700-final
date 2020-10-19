@@ -17,6 +17,8 @@ title: 'STATS 700 Final Project: Mixture Model on Source Detection Problem'
         algorithm](#inference-algorithm-1-em-algorithm)
     -   [Inference Algorithm 2: Gibbs
         Sampler](#inference-algorithm-2-gibbs-sampler)
+    -   [Inference Algorithm 3: VI
+        Algorithm](#inference-algorithm-3-vi-algorithm)
 
 Prepare & plot Chandra dataset
 ==============================
@@ -57,7 +59,7 @@ data <- list(X = spatial[1:1000,])
 ggplot() + geom_point(data = data.frame(x = data$X[,1], y = data$X[,2]), aes(x, y)) 
 ```
 
-![](stats700final_files/figure-markdown/unnamed-chunk-3-1.png)
+![](README_files/figure-markdown/unnamed-chunk-3-1.png)
 
 Mixture of Finite Gaussian Mixture Model and Uniform Background
 ===============================================================
@@ -116,13 +118,13 @@ for(i in 1:niters) {
 print(plot_2D_MM_signal(chandra))
 ```
 
-![](stats700final_files/figure-markdown/unnamed-chunk-6-1.png)
+![](README_files/figure-markdown/unnamed-chunk-6-1.png)
 
 ``` {.r}
 print(plot_em_loglik(loglik))
 ```
 
-![](stats700final_files/figure-markdown/unnamed-chunk-6-2.png)
+![](README_files/figure-markdown/unnamed-chunk-6-2.png)
 
 Inference Algorithm 2: Gibbs Sampler
 ------------------------------------
@@ -184,4 +186,66 @@ for(i in 1:niters) {
 print(plot_2D_GMM_signal(chandra, chandra$signal[[1]]$z))
 ```
 
-![](stats700final_files/figure-markdown/unnamed-chunk-9-1.png)
+![](README_files/figure-markdown/unnamed-chunk-9-1.png)
+
+``` {.r}
+# plot posterior
+post_samp = sample_post(chandra)
+output <- sample_theta(k = 6, post_samp$X, post_samp$z, post_samp$K)
+print(hist_rho(post_samp$rho))
+```
+
+![](README_files/figure-markdown/unnamed-chunk-10-1.png)
+
+    ## NULL
+
+``` {.r}
+print(hist_pi(output$pi))
+```
+
+![](README_files/figure-markdown/unnamed-chunk-10-2.png)
+
+    ## NULL
+
+``` {.r}
+print(hist_mu(output$mu, data$mu))
+```
+
+![](README_files/figure-markdown/unnamed-chunk-10-3.png)
+
+    ## NULL
+
+Inference Algorithm 3: VI Algorithm
+-----------------------------------
+
+``` {.r}
+source('vb/vi_gmm.R')
+source('utils/helpers.R')
+source('utils/visualisation.R')
+```
+
+``` {.r}
+set.seed(0)
+K = 6
+D = 2
+
+# intialize VI algorithm at random
+chandra <- vb_gmm(data$X, K = 6, epsilon_conv = 1e-4)
+```
+
+![](README_files/figure-markdown/unnamed-chunk-12-1.png)![](README_files/figure-markdown/unnamed-chunk-12-2.png)![](README_files/figure-markdown/unnamed-chunk-12-3.png)![](README_files/figure-markdown/unnamed-chunk-12-4.png)![](README_files/figure-markdown/unnamed-chunk-12-5.png)![](README_files/figure-markdown/unnamed-chunk-12-6.png)![](README_files/figure-markdown/unnamed-chunk-12-7.png)![](README_files/figure-markdown/unnamed-chunk-12-8.png)![](README_files/figure-markdown/unnamed-chunk-12-9.png)![](README_files/figure-markdown/unnamed-chunk-12-10.png)![](README_files/figure-markdown/unnamed-chunk-12-11.png)![](README_files/figure-markdown/unnamed-chunk-12-12.png)![](README_files/figure-markdown/unnamed-chunk-12-13.png)![](README_files/figure-markdown/unnamed-chunk-12-14.png)![](README_files/figure-markdown/unnamed-chunk-12-15.png)![](README_files/figure-markdown/unnamed-chunk-12-16.png)![](README_files/figure-markdown/unnamed-chunk-12-17.png)![](README_files/figure-markdown/unnamed-chunk-12-18.png)![](README_files/figure-markdown/unnamed-chunk-12-19.png)![](README_files/figure-markdown/unnamed-chunk-12-20.png)
+
+``` {.r}
+ggplot(data.frame(it = 1: length(chandra$L), ELBO = chandra$L)) + 
+  geom_line(aes(it, ELBO)) + geom_point(aes(it, ELBO))
+```
+
+![](README_files/figure-markdown/unnamed-chunk-13-1.png)
+
+``` {.r}
+# visualize cluster at convergence
+res = make_visual_obj_from_vb(chandra, data$X)
+visualize_result(res, res$X, res$K, res$bg_lower, res$bg_upper)
+```
+
+![](README_files/figure-markdown/unnamed-chunk-13-2.png)
